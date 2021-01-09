@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import *
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 class Neuron:
     def __init__(self, size):
@@ -25,7 +28,7 @@ def load_data(filename):
     f = open(filename)
     # Si utilise dataset_images.csv laisser cette ligne
     # Si utilise myfilename.csv commenter cette ligne !
-    f.readline() #on lit la première ligne d'entêtes pour s'en débarasser
+   # f.readline() #on lit la première ligne d'entêtes pour s'en débarasser
     data = np.loadtxt(f, delimiter=',')
     inputs = data[:, :-1] #toutes les colonnes sauf la dernière
     desired = data[:, -1] #seulement la dernière colonne (le résultat, la sortie souhaitée)
@@ -40,9 +43,16 @@ def evaluate_accuracy(nn, inputs, outputs):
     score /= len(inputs) #Erreur RMS
     return score
 
+def accuracy(confusion_matrix):
+   diagonal_sum = confusion_matrix.trace()
+   sum_of_all_elements = confusion_matrix.sum()
+   return diagonal_sum / sum_of_all_elements
+
 if __name__ == "__main__":
     # Changer nom du fichier entre dataset_images et myfilename
-    inputs, desired = load_data('dataset_images.csv')
+
+    #Ligne 1 / 2 / 9 a supprimer car 756 pixel au lieu de 784
+    inputs, desired = load_data('myfilename.csv')
     inputs /= 255.0 #On normalise les entrées
 
     #On sépare ensemble d'apprentissage et ensemble de test (ensemble = data)
@@ -56,10 +66,31 @@ if __name__ == "__main__":
     #ax.matshow(inputs[0].reshape(28, 28), cmap=plt.cm.gray)
     #plt.show()
 
-    mlp = MLPClassifier(solver='sgd',
-                        hidden_layer_sizes=(10),
-                        max_iter=10000)
-    mlp.fit(train_inputs, train_outputs)
+
+    X_train, X_test, y_train, y_test = train_test_split(inputs, desired)
+
+    print(f"desired: {desired}")
+    print(len(desired))
+
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+    # Now apply the transformations to the data:
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
+
+    #mlp = MLPClassifier(hidden_layer_sizes=(150,100,50),
+    #                    activation = 'relu',solver='adam',random_state=1,
+    #                    max_iter=300)
+    #mlp.fit(train_inputs, train_outputs)
+
+
+    mlp = MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
+    mlp.fit(X_train,y_train)
+
+    predictions = mlp.predict(X_test)
+    print(confusion_matrix(y_test,predictions))
+    print(classification_report(y_test,predictions))
 
     #print(len(inputs[0])) #Taille du vecteur d'entrée
     #print(len(inputs))  #Nombre d'exemples
@@ -88,11 +119,23 @@ if __name__ == "__main__":
     #learning_score = evaluate_accuracy(n, test_inputs, test_outputs)
     #print(f"#Score de test : {round(learning_score * 100)}%")
 
+    learning_score = mlp.score(test_inputs, test_outputs)
+    print(f"#Score d'apprentissage test data: {round(learning_score * 100)}%")
 
     #Evaluer sur l'ensemble d'apprentissage la qualité de mon modèle
     learning_score = mlp.score(train_inputs, train_outputs)
     print(f"#Score d'apprentissage : {round(learning_score * 100)}%")
 
     #Evaluer sur l'ensemble de test la qualité de mon modèle
-    learning_score = mlp.score(train_inputs, train_outputs)
+    learning_score = mlp.score(inputs, desired)
     print(f"#Score de test : {round(learning_score * 100)}%")
+
+
+    # Prediction
+    arr = [inputs[9], inputs[10]]
+    res = [desired[9], desired[10]]
+    prediction = mlp.predict(arr)
+    print(f"Prediction 10e image: {prediction}")
+
+    cm = confusion_matrix(prediction, res)
+    print(f"Accuracy of MLPClassifier : {accuracy(cm)}")

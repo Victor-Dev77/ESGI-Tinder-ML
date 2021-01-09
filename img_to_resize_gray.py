@@ -13,6 +13,6 @@ if __name__ == "__main__":
         image = Image.open(img).convert('LA')
         wpercent = (size / float(image.size[0]))
         hsize = int((float(image.size[1]) * float(wpercent)))
-        image = image.resize((size, hsize), PIL.Image.ANTIALIAS)
+        image = image.resize((size, size), PIL.Image.ANTIALIAS)
         image.save('/Users/victor/Documents/MACHINE LEARNING/PROJET ML/output_images/' + name + '.png')
     
