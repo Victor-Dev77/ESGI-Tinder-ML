@@ -74,18 +74,21 @@ if __name__ == "__main__":
 
     scaler = StandardScaler()
     scaler.fit(X_train)
-    # Now apply the transformations to the data:
+    # Applique transformations sur les données:
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
 
 
     #mlp = MLPClassifier(hidden_layer_sizes=(150,100,50),
-    #                    activation = 'relu',solver='adam',random_state=1,
+    #                    activation='relu',solver='adam',random_state=1,
     #                    max_iter=300)
     #mlp.fit(train_inputs, train_outputs)
 
 
-    mlp = MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
+    mlp = MLPClassifier(hidden_layer_sizes=(150,100,50),
+                        activation='relu',solver='adam',random_state=1,
+                        max_iter=300)
+    #MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
     mlp.fit(X_train,y_train)
 
     predictions = mlp.predict(X_test)
@@ -132,10 +135,10 @@ if __name__ == "__main__":
 
 
     # Prediction
-    arr = [inputs[9], inputs[10]]
-    res = [desired[9], desired[10]]
+    arr = [inputs[9]]
+    res = [desired[9]]
     prediction = mlp.predict(arr)
-    print(f"Prediction 10e image: {prediction}")
+    print(f"Prediction 10e image: {prediction} -> res attendu: {res}")
 
     cm = confusion_matrix(prediction, res)
     print(f"Accuracy of MLPClassifier : {accuracy(cm)}")

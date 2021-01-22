@@ -23,8 +23,7 @@ def transformArray(array):
 
 if __name__ == "__main__":
     listArrayImages = []
-    # Mettre son propre chemin (chemin relatif fonctionne peut etre)
-    listImage = glob.glob("/Users/victor/Documents/MACHINE LEARNING/PROJET ML/output_images/*.png")
+    listImage = glob.glob("./output_images/*.png")
     for img in listImage:
         name = img.split("/")[-1].split(".")[0]
         image = Image.open(img)

@@ -8,9 +8,7 @@
 
 4. Le fichier myfilename.csv est généré
 
-5. Dans le fichier tinder-ml.py, changer le nom du fichier a lire: dataset_images.csv en myfilename.csv
-
-6. Executer le fichier tinder-ml.py
+5. Executer le fichier tinder-ml.py
 
 
 
