@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # Changer nom du fichier entre dataset_images et myfilename
 
     #Ligne 1 / 2 / 9 a supprimer car 756 pixel au lieu de 784
-    inputs, desired = load_data('csv_images.csv') #myfilename #csv_deepfake
+    inputs, desired = load_data('csv_deepfake.csv') #myfilename #csv_deepfake
     inputs /= 255.0 #On normalise les entrées
 
     testinput, testdesired = load_data('csv_images.csv') #csv_images
@@ -57,11 +57,11 @@ if __name__ == "__main__":
     #mlp.fit(train_inputs, train_outputs)
 
 
-    mlp = MLPClassifier(hidden_layer_sizes=(100),
-                        solver='lbfgs',
-                        max_iter=200,
-                        learning_rate_init=0.001,
-                        momentum=0.1,
+    mlp = MLPClassifier(hidden_layer_sizes=(13, 6,),
+                        solver='sgd',
+                        max_iter=2000,
+                        learning_rate_init=0.01,
+                        momentum=0.9,
                         n_iter_no_change=10)
     #MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
     #mlp.fit(X_train,y_train)
@@ -99,24 +99,9 @@ if __name__ == "__main__":
     print(confusion_matrix(outputs_test, predictions, labels=[0, 1]))
     print(classification_report(outputs_test, predictions))
 
-    #print(len(inputs[0])) #Taille du vecteur d'entrée
-    #print(len(inputs))  #Nombre d'exemples
-    #print(inputs)       #Tableau de données
-
-    #Evaluer sur l'ensemble d'apprentissage la qualité de mon modèle
-    #learning_score = evaluate_accuracy(n, train_inputs, train_outputs)
-    #print(f"#Score d'apprentissage : {round(learning_score * 100)}%")
-
-    #Evaluer sur l'ensemble de test la qualité de mon modèle
-    #learning_score = evaluate_accuracy(n, test_inputs, test_outputs)
-    #print(f"#Score de test : {round(learning_score * 100)}%")
-
-    
-
     #Evaluer sur l'ensemble de test la qualité de mon modèle
     learning_score = mlp.score(inputs, desired)
     print(f"Score d'apprentissage input desired : {round(learning_score * 100)}%")
-
 
     # Prediction
     arr = [inputs[9]]
