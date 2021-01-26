@@ -78,14 +78,14 @@ if __name__ == "__main__":
     #mlp.fit(train_inputs, train_outputs)
 
 
-    mlp = MLPClassifier(hidden_layer_sizes=(100, 50,),
+    mlp = MLPClassifier(hidden_layer_sizes=(25),
                         solver='sgd',
-                        activation = 'logistic',
+                        activation = 'relu',
                         max_iter=2000,
-                        shuffle=True,
+                        # shuffle=True,
                         learning_rate='constant',
-                        learning_rate_init=0.15,
-                        momentum=0.9,
+                        learning_rate_init=0.04,
+                        momentum=0.4,
                         n_iter_no_change=10)
     #MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
     #mlp.fit(X_train,y_train)
