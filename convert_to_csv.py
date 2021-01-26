@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 
     # print("--- NEW METHOD --- ")
-    deepfake = True
+    deepfake = False
 
     csvName, path_input_woman, path_output_woman, path_input_man, path_output_man, = "", "", "", "", ""
     if deepfake:
