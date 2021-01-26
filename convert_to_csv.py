@@ -68,14 +68,14 @@ if __name__ == "__main__":
 
     # print("--- NEW METHOD --- ")
 
-    csvName = "csv_images"
+    csvName = "csv_deepfake"
     initCsv(csvName)
     files = []
-    woman = os.listdir("images/woman")
-    man = os.listdir("images/man")
+    woman = os.listdir("deepfake_input/woman")
+    man = os.listdir("deepfake_input/man")
 
-    resizer(woman, "images/woman/", "resized_images/woman/", 0)
-    resizer(man, "images/man/", "resized_images/man/", 1)
+    resizer(woman, "deepfake_input/woman/", "deepfake_output/woman/", 0)
+    resizer(man, "deepfake_input/man/", "deepfake_output/man/", 1)
 
     random.shuffle(files)
     for file in files:
