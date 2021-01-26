@@ -43,7 +43,7 @@ if __name__ == "__main__":
     res_inputs_test, res_output_test = load_data('csv_images.csv') #csv_images
     res_inputs_test /= 255.0
 
-    deepfake = False
+    deepfake = True
     TEST_PERCENTAGE = 100
 
     inputs_test = []
@@ -78,19 +78,19 @@ if __name__ == "__main__":
     #mlp.fit(train_inputs, train_outputs)
 
 
-    mlp = MLPClassifier(hidden_layer_sizes=(25), #40
+    mlp = MLPClassifier(hidden_layer_sizes=(40,), #40
                         solver='sgd',
-                        activation = 'relu', #logistic
-                        max_iter=2000, #1000
-                        # shuffle=True,
+                        activation = 'logistic', #logistic
+                        max_iter=1000, #1000
+                        shuffle=True,
                         learning_rate='constant',
-                        learning_rate_init=0.04, #0.1
-                        momentum=0.4, #0.9
+                        learning_rate_init=0.1, #0.1
+                        momentum=0.9, #0.9
                         n_iter_no_change=10)
-                        
+
     #MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
     #mlp.fit(X_train,y_train)
-    print(len(train_inputs))
+    #print(len(train_inputs)) #84 #120
     mlp.fit(train_inputs, train_outputs)
 
     np.random.shuffle(inputs_test)

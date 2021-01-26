@@ -34,7 +34,7 @@ def resizer(pictureArray, pathFrom, pathDest, desired):
         if image is None:
             print(f"Image {i} not read")
             continue
-        res = cv2.resize(image, (28, 28), interpolation=cv2.INTER_CUBIC)
+        res = cv2.resize(image, (50, 50), interpolation=cv2.INTER_CUBIC)
         cv2.imwrite(f"{pathDest}{i}", res, [cv2.IMWRITE_JPEG_QUALITY, 100])
         img = np.array(res)
         files.append([img, desired])
@@ -67,15 +67,28 @@ if __name__ == "__main__":
 
 
     # print("--- NEW METHOD --- ")
+    deepfake = False
 
-    csvName = "csv_deepfake"
+    csvName, path_input_woman, path_output_woman, path_input_man, path_output_man, = "", "", "", "", ""
+    if deepfake:
+        csvName = "csv_deepfake"
+        path_input_woman = "deepfake_input/woman/"
+        path_output_woman = "deepfake_output/woman/"
+        path_input_man = "deepfake_input/man/"
+        path_output_man = "deepfake_output/man/"
+    else:
+        csvName = "csv_images"
+        path_input_woman = "images/woman/"
+        path_output_woman = "resized_images/woman/"
+        path_input_man = "images/man/"
+        path_output_man = "resized_images/man/"
     initCsv(csvName)
     files = []
-    woman = os.listdir("deepfake_input/woman")
-    man = os.listdir("deepfake_input/man")
+    woman = os.listdir(path_input_woman)
+    man = os.listdir(path_input_man)
 
-    resizer(woman, "deepfake_input/woman/", "deepfake_output/woman/", 0)
-    resizer(man, "deepfake_input/man/", "deepfake_output/man/", 1)
+    resizer(woman, path_input_woman, path_output_woman, 0)
+    resizer(man, path_input_man, path_output_man, 1)
 
     random.shuffle(files)
     for file in files:
