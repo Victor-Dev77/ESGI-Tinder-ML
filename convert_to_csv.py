@@ -34,7 +34,7 @@ def resizer(pictureArray, pathFrom, pathDest, desired):
         if image is None:
             print(f"Image {i} not read")
             continue
-        res = cv2.resize(image, (30, 30), interpolation=cv2.INTER_CUBIC)
+        res = cv2.resize(image, (30, 30), interpolation=cv2.INTER_NEAREST) #INTER_LANCZOS4
         cv2.imwrite(f"{pathDest}{i}", res, [cv2.IMWRITE_JPEG_QUALITY, 100])
         img = np.array(res)
         files.append([img, desired])
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 
     # print("--- NEW METHOD --- ")
-    deepfake = False
+    deepfake = True
 
     csvName, path_input_woman, path_output_woman, path_input_man, path_output_man, = "", "", "", "", ""
     if deepfake:

@@ -1,10 +1,10 @@
 import numpy as np
 from math import *
-from sklearn.neural_network import MLPClassifier, MLPRegressor
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import pickle
 
 def load_data(filename):
     f = open(filename)
@@ -12,15 +12,6 @@ def load_data(filename):
     inputs = data[:, :-1] #toutes les colonnes sauf la dernière
     desired = data[:, -1] #seulement la dernière colonne (le résultat, la sortie souhaitée)
     return inputs, desired
-
-def evaluate_accuracy(nn, inputs, outputs):
-    score = 0
-    for i in range(len(inputs)):
-        output = nn.compute(inputs[i])
-        if round(output) == outputs[i]:
-            score += 1
-    score /= len(inputs) #Erreur RMS
-    return score
 
 def accuracy(confusion_matrix):
    diagonal_sum = confusion_matrix.trace()
@@ -30,8 +21,9 @@ def accuracy(confusion_matrix):
 def showLearningCurve(mlp):
     fig, ax = plt.subplots()
     ax.plot(mlp.loss_curve_)
-    plt.yscale('log')
-    fig.tight_layout()
+    #plt.yscale('log')
+    ax.set_title("Loss During GD (Rate=0.001)")
+   # fig.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
@@ -63,35 +55,41 @@ if __name__ == "__main__":
         outputs_test = test_outputs
 
     
-    X_train, X_test, y_train, y_test = train_test_split(deepfake_inputs, deepfake_desired)
+    X_train, X_test, y_train, y_test = train_test_split(deepfake_inputs, deepfake_desired, test_size=0.3, random_state=1)
 
-    scaler = StandardScaler()
-    scaler.fit(X_train)
-    # Applique transformations sur les données:
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
+    """
+    mlp = MLPClassifier(hidden_layer_sizes=(100,), #40
+                        solver='sgd', #adam
+                        activation = 'relu', #logistic
+                        max_iter= 1000,
+                        #tol=1e-4,
+                        #random_state=1,
+                        shuffle=True,
+                        learning_rate='constant', #adaptive
+                        learning_rate_init=0.01, #0.1
+                        momentum=0.9, #0.9
+                        n_iter_no_change=10)
+    """
 
+    # Load IA mlp
+    #"""
+    filename = "ia_72p.mlp"
+    file = open(filename, 'rb')
+    mlp = pickle.load(file)
+    file.close()
+    #"""
 
-    #mlp = MLPClassifier(hidden_layer_sizes=(150,100,50),
-    #                    activation='relu',solver='adam',random_state=1,
-    #                    max_iter=300)
+    print(len(train_inputs)) #84 #120
     #mlp.fit(train_inputs, train_outputs)
 
 
-    mlp = MLPClassifier(hidden_layer_sizes=(75,), #40
-                        solver='sgd',
-                        activation = 'logistic', #logistic
-                        max_iter= 1000, #1000
-                        shuffle=True,
-                        learning_rate='constant',
-                        learning_rate_init=0.015, #0.1
-                        momentum=0.9, #0.9
-                        n_iter_no_change=10)
-
-    #MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
-    #mlp.fit(X_train,y_train)
-    #print(len(train_inputs)) #84 #120
-    mlp.fit(train_inputs, train_outputs)
+    #Save model
+    """
+    filename = "ia.mlp"
+    file = open(filename, "wb")
+    pickle.dump(mlp, file)
+    file.close()
+    """
 
     np.random.shuffle(inputs_test)
     predictions = mlp.predict(inputs_test)
@@ -111,6 +109,7 @@ if __name__ == "__main__":
     learning_score = mlp.score(inputs_test, outputs_test)
     print(f"#Score de test : {round(learning_score * 100)}%")
 
+    print("   F  H")
     print(confusion_matrix(outputs_test, predictions, labels=[0, 1]))
     print(classification_report(outputs_test, predictions, zero_division=0))
 
@@ -118,16 +117,17 @@ if __name__ == "__main__":
     learning_score = mlp.score(deepfake_inputs, deepfake_desired)
     print(f"Score d'apprentissage input desired : {round(learning_score * 100)}%")
 
-    # Prediction
-    arr = [deepfake_inputs[9]]
-    res = [deepfake_desired[9]]
-    prediction = mlp.predict(arr)
-    print(f"Prediction 10e image: {prediction} -> res attendu: {res}")
-
-    cm = confusion_matrix(prediction, res)
-    print(f"Accuracy of MLPClassifier : {accuracy(cm)}")
-
     res = accuracy_score(outputs_test, predictions)
     print(f"accurancy --> {round(res * 100)}%")
 
-    #showLearningCurve(mlp)
+  #  showLearningCurve(mlp)
+
+    """fig, ax = plt.subplots(1, 1, figsize=(15,6))
+    ax.imshow(np.transpose(mlp.coefs_[0]), cmap=plt.get_cmap("gray"), aspect="auto")
+    plt.show()"""
+    """
+    hidden_2 = np.transpose(mlp.coefs_[0])[16]  # Pull weightings on inputs to the 2nd neuron in the first hidden layer
+    fig, ax = plt.subplots(1, figsize=(5,5))
+    ax.imshow(np.reshape(hidden_2, (30,30)), cmap=plt.get_cmap("gray"), aspect="auto")
+    plt.show()
+    """
