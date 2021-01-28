@@ -1,8 +1,6 @@
 import numpy as np
-from math import *
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 import pickle
 
@@ -13,29 +11,28 @@ def load_data(filename):
     desired = data[:, -1] #seulement la dernière colonne (le résultat, la sortie souhaitée)
     return inputs, desired
 
-def accuracy(confusion_matrix):
-   diagonal_sum = confusion_matrix.trace()
-   sum_of_all_elements = confusion_matrix.sum()
-   return diagonal_sum / sum_of_all_elements
-
 def showLearningCurve(mlp):
     fig, ax = plt.subplots()
     ax.plot(mlp.loss_curve_)
     #plt.yscale('log')
     ax.set_title("Loss During GD (Rate=0.001)")
-   # fig.tight_layout()
+    #fig.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
-    # Changer nom du fichier entre dataset_images et myfilename
 
-    deepfake_inputs, deepfake_desired = load_data('csv_deepfake.csv') #myfilename #csv_deepfake
+
+    """
+        EXTRACTION DES DONNEES
+    """
+
+    deepfake_inputs, deepfake_desired = load_data('csv_deepfake.csv') #csv_deepfake
     deepfake_inputs /= 255.0 #On normalise les entrées
 
     res_inputs_test, res_output_test = load_data('csv_images.csv') #csv_images
     res_inputs_test /= 255.0
 
-    deepfake = False
+    deepfake = True
     TEST_PERCENTAGE = 100
 
     inputs_test = []
@@ -54,9 +51,12 @@ if __name__ == "__main__":
         inputs_test = test_inputs
         outputs_test = test_outputs
 
-    
-    X_train, X_test, y_train, y_test = train_test_split(deepfake_inputs, deepfake_desired, test_size=0.3, random_state=1)
 
+
+    """
+        APPRENTISSAGE
+    """
+    
     """
     mlp = MLPClassifier(hidden_layer_sizes=(100,), #40
                         solver='sgd', #adam
@@ -73,22 +73,28 @@ if __name__ == "__main__":
 
     # Load IA mlp
     #"""
-    filename = "ia_72p.mlp"
+    filename = "ia.mlp" #"ia_72p.mlp"
     file = open(filename, 'rb')
     mlp = pickle.load(file)
     file.close()
     #"""
 
-    print(len(train_inputs)) #84 #120
+    print(len(train_inputs))
     #mlp.fit(train_inputs, train_outputs)
-
 
     #Save model
     """
-    filename = "ia.mlp"
+    filename = "ia_full_real.mlp"
     file = open(filename, "wb")
     pickle.dump(mlp, file)
     file.close()
+    """
+
+
+
+
+    """
+        PREDICTIONS
     """
 
     np.random.shuffle(inputs_test)
@@ -102,6 +108,12 @@ if __name__ == "__main__":
         else:
             print(f"{i}_ desired : {outputs_test[i]} | predict : {predictions[i]}")
 
+
+
+
+    """
+        RESULTATS
+    """
     #Evaluer sur l'ensemble d'apprentissage la qualité de mon modèle
     learning_score = mlp.score(train_inputs, train_outputs)
     print(f"#Score d'apprentissage : {round(learning_score * 100)}%")
@@ -113,21 +125,4 @@ if __name__ == "__main__":
     print(confusion_matrix(outputs_test, predictions, labels=[0, 1]))
     print(classification_report(outputs_test, predictions, zero_division=0))
 
-    #Evaluer sur l'ensemble de test la qualité de mon modèle
-    learning_score = mlp.score(deepfake_inputs, deepfake_desired)
-    print(f"Score d'apprentissage input desired : {round(learning_score * 100)}%")
-
-    res = accuracy_score(outputs_test, predictions)
-    print(f"accurancy --> {round(res * 100)}%")
-
-  #  showLearningCurve(mlp)
-
-    """fig, ax = plt.subplots(1, 1, figsize=(15,6))
-    ax.imshow(np.transpose(mlp.coefs_[0]), cmap=plt.get_cmap("gray"), aspect="auto")
-    plt.show()"""
-    """
-    hidden_2 = np.transpose(mlp.coefs_[0])[16]  # Pull weightings on inputs to the 2nd neuron in the first hidden layer
-    fig, ax = plt.subplots(1, figsize=(5,5))
-    ax.imshow(np.reshape(hidden_2, (30,30)), cmap=plt.get_cmap("gray"), aspect="auto")
-    plt.show()
-    """
+    #showLearningCurve(mlp)

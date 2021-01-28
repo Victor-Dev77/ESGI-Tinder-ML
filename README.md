@@ -1,12 +1,12 @@
 # Fonctionnement
 
-1. Executer le fichier img_to_resize_gray.py 
+1. Executer le fichier convert_to_csv.py
 
-2. Les images dans le dossier output_images sont générées
+2. Changer le boolean "deepfake" a True et re-executer le fichier convert_to_csv.py
 
-3. Executer le fichier convert_to_csv.py
+3. Les images dans les dossier deepfake_output et resized_images sont générées
 
-4. Le fichier myfilename.csv est généré
+4. Les fichiers csv_deepfake.csv et csv_images.csv est générés
 
 5. Executer le fichier tinder-ml.py
 
@@ -16,22 +16,23 @@
 
 ## Dosiers:
 
-- image_not_work sont les images qui ne donne pas le meme nb de colonne dans le csv que les autres images donc a la lecture ca crash
+- deepfake_input sont les images deepfake originales classées entre Homme et Femme
 
-- input_images sont les images originales
+- images sont les images réelles originales classées entre Homme et Femme
 
-- output_images sont les images générées en 28x28 ou 50x50 et en noir et blanc
+- deepfake_output sont les images deepfake générées en 30x30 et en noir et blanc
+
+- resized_images sont les images deepfake générées en 30x30 et en noir et blanc
 
 
 ## Fichiers:
 
-- convert_to_csv.py convertit les images du dossiers output_images en 1 fichiers .csv contenant les pixels de tt les images (1 ligne = 1 images).
-Le dernier nombre correspond à 0 si Femme, 1 si Homme. A modifier a la main car par defaut ca ajoute 0 pour chaque images.
-Ensuite, ajouter d'autres criteres à la suite sur ce qu'on veut detecter dans "desired"
+- convert_to_csv.py transforme les images du dossiers deepfake_input et images en image de taille 30x30 et en noir et blanc dans les dossier respectifs deepfake_output et resized_images.
 
-- dataset_images.csv est un exemple de dataset des tp ML
+Il convertit aussi les images des dossiers de sorties en fichiers .csv respectifs (csv_deepfake.csv, csv_images.csv) contenant les pixels de toutes les images (1 ligne = 1 images).
+Le dernier chiffre de chaque ligne correspond à 0 si l'image est une Femme, 1 si l'image est un Homme.
 
-- img_to_resize_gray.py transforme les images du dossiers input_images en une image de taille 28x28 ou 50x50 et en noir et blanc dans le dossier output_images
+- csv_deepfake.csv et csv_images.csv sont les fichiers de données à traiter, contenant les images.
 
-- tinder-ml.py est le fichier pour faire l'algo de classification
+- tinder-ml.py est le fichier qui execute l'algorithme de classification
 
